@@ -2,7 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define HASHMAP_SIZE 10
+//define the size of your hashmap
+#define HASHMAP_SIZE 101
 
 typedef struct Node {
     char *key;
@@ -19,8 +20,8 @@ size_t hash(char *key){
     size_t hash = 0;
 
     for (size_t i=0; key[i] != '\0'; i++){
-        hash += ((unsigned char)key[i] * 67) / 3;
-    }
+        hash = hash * 13 + (unsigned char)key[i];
+        }
 
     return hash % HASHMAP_SIZE;
 }
@@ -63,15 +64,15 @@ int remove_key(Map *map, char *key){
     Node *prev = NULL;
     while (current != NULL) {
         if (strcmp(current->key, key) == 0) {
-        if (prev == NULL) {
-            map->hashmap[index] = current->next;
-        } 
-        else {
-            prev->next = current->next;
-        }
-        free(current->key);
-        free(current);
-        return 0;
+            if (prev == NULL) {
+                map->hashmap[index] = current->next;
+            }
+            else {
+                prev->next = current->next;
+            }
+            free(current->key);
+            free(current);
+            return 0;
         }
         prev = current;
         current = current->next;
@@ -86,11 +87,11 @@ int get(Map *map, char *key, int *out){
     while (current != NULL) {
         if (strcmp(current->key, key) == 0) {
             *out = current->value;
-            return 1;
+            return 0;
         }
         current = current->next;
     }
-    return 0;
+    return 1;
 }
 
 void free_map(Map *map){
@@ -113,7 +114,6 @@ void print_map(Map *map){
             printf("[%s: %d]\n", current->key, current -> value);
             current = current->next;
         }
-        printf("NULL, NULL\n");
     }
 }
 
@@ -122,6 +122,8 @@ int main(){
     if(map == NULL){
         return 1;
     }
+    //Use examples
     init_hashmap(map);
-    insert(map, "telephone", 789);
+    insert(map, "cereal", 789);
+    print_map(map);
 }
